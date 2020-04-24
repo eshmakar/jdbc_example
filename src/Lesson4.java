@@ -26,6 +26,8 @@ public class Lesson4 {
             if (rs.absolute(2)) //переход на конкретную строку
                 System.out.println(rs.getString("name")); //выводит столбец имя (то есть имя книги)
 
+                if (rs.previous()) //переходит на одно строку вверх
+                    System.out.println(rs.getString("name"));
 
             }catch (SQLException e){
                 e.printStackTrace();
