@@ -32,8 +32,19 @@ public class Lesson4 {
                 if (rs.last()) //переходит на последнюю строку
                     System.out.println(rs.getString("name"));
 
-                if (rs.first())//переходит на первую строку
-                    System.out.println(rs.getString("name"));
+
+                if (rs.relative(-3)) {//на сколько строк переместить курсор назад (показать данные)
+                    ResultSetMetaData rsmd = rs.getMetaData(); //выводить все книги, которые идут после курсора
+                    while (rs.next()){
+                        for (int i = 1; i <= rsmd.getColumnCount() ; ++i) { //считывает имена полей
+                            String field = rsmd.getColumnName(i); // получаем имя поля
+                            String value = rs.getString(field); //получаем значение этого поля
+                            System.out.print(field + ": " +value + " ");
+                        }
+                        System.out.println();
+                    }
+                }
+
 
             }catch (SQLException e){
                 e.printStackTrace();
