@@ -12,7 +12,7 @@ public class Lesson4 {
             ResultSet rs = null;
             try {
                 rs = statement.executeQuery("Select * from books"); //получаем список всех книг
-                while (rs.next()){
+            /*    while (rs.next()){
                     int id = rs.getInt(1); //получаем номер по списку
                     double price = rs.getDouble(3); //получаем цену
 
@@ -21,7 +21,12 @@ public class Lesson4 {
                         rs.updateDouble(3, price-10); //обновляем цену
                         rs.updateRow();//чтобы изменения применились!
                     }
-                }
+                }*/
+
+            if (rs.absolute(2)) //переход на конкретную строку
+                System.out.println(rs.getString("name")); //выводит столбец имя (то есть имя книги)
+
+
             }catch (SQLException e){
                 e.printStackTrace();
             }finally {
