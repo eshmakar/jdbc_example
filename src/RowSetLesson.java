@@ -4,24 +4,58 @@ import javax.sql.rowset.RowSetProvider;
 import java.sql.*;
 
 public class RowSetLesson {
-    static String url = "jdbc:mysql://localhost:3306/first_lesson?useSSL=false&serverTimezone=UTC";
+    // Задаем параметры подключения как статические переменные
+    static String url =  "jdbc:mysql://localhost:3306/first_lesson?useSSL=false&serverTimezone=UTC";
     static String userName = "root";
     static String password = "root";
-
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        ResultSet rs = getResultSet(); //вызываем метод
-        while (rs.next())//выводится имена книг
-            System.out.println(rs.getString("name"));
+        // Получаем результрующий набор от метода getResSet()
+        ResultSet resultSet = getResSet();
+//        while (resultSet.next())
+//            System.out.println(resultSet.getString("name"));
+
+        // Создаем новый объект кэшированного набора строк
+        CachedRowSet rowSet = (CachedRowSet) resultSet;
+        // Выполняем запрос к набору строк или к базе данных
+        rowSet.setCommand("SELECT * FROM books WHERE price > ?");
+        rowSet.setDouble(1, 30);
+
+        // Задаем параметры подключения к БД
+        rowSet.setUrl(url);
+        rowSet.setUsername(userName);
+        rowSet.setPassword(password);
+        rowSet.execute();
+
+        // Вносим изменения в набор строк и базу данных
+        rowSet.absolute(2);
+        rowSet.deleteRow();
+        rowSet.beforeFirst();
+        Connection connection = DriverManager.getConnection(url, userName, password);
+        connection.setAutoCommit(false);
+        rowSet.acceptChanges(connection);
+
+        // Выводим набор строк
+        while (rowSet.next()) {
+            String name = rowSet.getString("name");
+            double price = rowSet.getDouble(3);
+            System.out.println(name + " " + price);
+        }
     }
 
-    static ResultSet getResultSet() throws ClassNotFoundException, SQLException { //возвращает результирующий набор
+    // Метод для получения результирующего набора
+    static ResultSet getResSet() throws ClassNotFoundException, SQLException {
+        // Регистрируем драйвер и выполняем подключение к БД
         Class.forName("com.mysql.cj.jdbc.Driver");
-        try (Connection conn = DriverManager.getConnection(url, userName, password);
-             Statement stat = conn.createStatement()) {
-            ResultSet rs = stat.executeQuery("SELECT * from books");
-            RowSetFactory factory = RowSetProvider.newFactory(); //получаем объект RowSetFactory (чтобы получить данные от кэша), потому что, соединение (resultSet) закрыто
-            CachedRowSet crs = factory.createCachedRowSet();//кэшированный набор
-            crs.populate(rs);//объект был пуст, с этим мы наполняем
+        try(Connection conn = DriverManager.getConnection(url, userName, password);
+            Statement stat = conn.createStatement()) {
+            // Получаем результирующий набор
+            ResultSet rs = stat.executeQuery("SELECT * FROM books");
+            // Получаем объект типа RowSetFactory
+            RowSetFactory factory = RowSetProvider.newFactory();
+            // Получаем объект кэшированного набора строк
+            CachedRowSet crs = factory.createCachedRowSet();
+            // Наполняем набор данными
+            crs.populate(rs);
             return crs;
         }
     }
