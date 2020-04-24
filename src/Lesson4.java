@@ -29,6 +29,12 @@ public class Lesson4 {
                 if (rs.previous()) //переходит на одно строку вверх
                     System.out.println(rs.getString("name"));
 
+                if (rs.last()) //переходит на последнюю строку
+                    System.out.println(rs.getString("name"));
+
+                if (rs.first())//переходит на первую строку
+                    System.out.println(rs.getString("name"));
+
             }catch (SQLException e){
                 e.printStackTrace();
             }finally {
