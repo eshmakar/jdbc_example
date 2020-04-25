@@ -17,21 +17,31 @@ public class Lesson5 {
             String command3 = "insert into fruit (name, amount, price) values ('Lemon', 30, 5.50)";
             String command4 = "insert into fruit (name, amount, price) values ('Pineapple', 20, 7.50)";
 
-            connection.setAutoCommit(false); //чтобы занести несколько значениее в одну транзакцию, необходимо отключить авто фиксирование
+//            connection.setAutoCommit(false); //чтобы занести несколько значениее в одну транзакцию, необходимо отключить авто фиксирование
+//
+//            //выполняем все команды (executeUpdate)
+//            statement.executeUpdate(createTable);
+//            statement.executeUpdate(command1);
+//
+//            Savepoint spt = connection.setSavepoint();//точка сохранения, после выполнения первой команды
+//            statement.executeUpdate(command2);
+//            statement.executeUpdate(command3);
+//            statement.executeUpdate(command4);
+//
+////            connection.commit(); //фиксируем все результаты
+//            connection.rollback(spt); //откатить изменения до точки сохранения spt
+//            connection.commit();//зафиксировать выполнение одной команды
+//            connection.releaseSavepoint(spt); //освобождение точки сохранения
 
-            //выполняем все команды (executeUpdate)
-            statement.executeUpdate(createTable);
-            Savepoint spt = connection.setSavepoint();//точка сохранения, после выполнения первой команды
 
-            statement.executeUpdate(command1);
-            statement.executeUpdate(command2);
-            statement.executeUpdate(command3);
-            statement.executeUpdate(command4);
+            connection.setAutoCommit(true); //чтобы вернуть групповые обновления, необходимо вернуть авто фиксацию
+            statement.addBatch(createTable);//создаем группу для выполнения
+            statement.addBatch(command1);
+            statement.addBatch(command2);
+            statement.addBatch(command3);
+            statement.addBatch(command4);
+            statement.executeBatch();//собираем все команды в группу
 
-//            connection.commit(); //фиксируем все результаты
-            connection.rollback(spt); //откатить изменения до точки сохранения spt
-            connection.commit();//зафиксировать выполнение одной команды
-            connection.releaseSavepoint(spt); //освобождение точки сохранения
         }
     }
 }
