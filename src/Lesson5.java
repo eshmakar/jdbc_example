@@ -13,7 +13,7 @@ public class Lesson5 {
         Class.forName("com.mysql.cj.jdbc.Driver");
 
         try (Connection connection = DriverManager.getConnection(url, userName, password);
-             Statement statement = connection.createStatement() ){
+             Statement statement = connection.createStatement()) {
             String createTable = "create table fruit (name varchar(15) not null, amount integer, price double not null, primary key(name))";
             String command1 = "insert into fruit (name, amount, price) values ('Apple', 200, 3.50)";
             String command2 = "insert into fruit (name, amount, price) values ('Orange', 50, 5.50)";
@@ -29,8 +29,8 @@ public class Lesson5 {
             statement.executeUpdate(command3);
             statement.executeUpdate(command4);
 
-            connection.commit(); //фиксируем все результаты
-
+//            connection.commit(); //фиксируем все результаты
+            connection.rollback(); //откатить изменения
         }
     }
 }
