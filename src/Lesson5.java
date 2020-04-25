@@ -1,7 +1,4 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 //Как занести несколько значении в таблицу за одну транзакцию
 
@@ -24,13 +21,17 @@ public class Lesson5 {
 
             //выполняем все команды (executeUpdate)
             statement.executeUpdate(createTable);
+            Savepoint spt = connection.setSavepoint();//точка сохранения, после выполнения первой команды
+
             statement.executeUpdate(command1);
             statement.executeUpdate(command2);
             statement.executeUpdate(command3);
             statement.executeUpdate(command4);
 
 //            connection.commit(); //фиксируем все результаты
-            connection.rollback(); //откатить изменения
+            connection.rollback(spt); //откатить изменения до точки сохранения spt
+            connection.commit();//зафиксировать выполнение одной команды
+            connection.releaseSavepoint(spt); //освобождение точки сохранения
         }
     }
 }
