@@ -3,6 +3,7 @@ import javax.sql.rowset.RowSetFactory;
 import javax.sql.rowset.RowSetProvider;
 import java.sql.*;
 
+
 public class RowSetLesson {
     // Задаем параметры подключения как статические переменные
     static String url =  "jdbc:mysql://localhost:3306/first_lesson?useSSL=false&serverTimezone=UTC";
